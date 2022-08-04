@@ -1,12 +1,13 @@
 .grid {
     /* background-color: purple; */
-    padding: 1em;
+    /* padding: 1em; */
     display: grid;
     grid-template-columns: repeat(5, 100px);
 }
 
 .grid div {
     text-align: center;
+    margin-inline: 10px;
 }
 
 .casuals {
@@ -19,6 +20,7 @@
 .sortHeader {
     cursor: pointer;
     text-align: center;
+    border: none;
 }
 
 .sortHeader:hover {

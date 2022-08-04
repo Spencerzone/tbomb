@@ -1,0 +1,26 @@
+.grid {
+    /* background-color: purple; */
+    padding: 1em;
+    display: grid;
+    grid-template-columns: repeat(5, 100px);
+}
+
+.grid div {
+    text-align: center;
+}
+
+.casuals {
+    display: grid;
+    grid-template-columns: repeat(3, 250px);
+    align-items: center;
+    border-bottom: dashed 1px #555;
+}
+
+.sortHeader {
+    cursor: pointer;
+    text-align: center;
+}
+
+.sortHeader:hover {
+    background-color: #555;
+}

@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import styles from './index.module.css';
 import { casualList } from '../data/casuals';
-import ColorBox from '../components/colorBox';
+import ColorBox from '../components/ColorBox';
 import { useEffect, useState } from 'react';
 
 export default function Home() {

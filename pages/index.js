@@ -5,29 +5,58 @@ import { casualList } from '../data/casuals';
 import ColorBox from '../components/ColorBox';
 import { useEffect, useState } from 'react';
 
+// firestore
+import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
+
 export default function Home() {
     const [listOfCasuals, setListOfCasuals] = useState([]);
+    const [casual, setCasual] = useState({});
+    const [load, setLoad] = useState();
 
     useEffect(() => {
-        const sortedList = casualList.sort((a, b) => {
+        let list = [];
+
+        const loadData = async () => {
+            const querySnapshot = await getDocs(collection(db, 'casuals'));
+            console.log(querySnapshot.docs);
+            querySnapshot.forEach((doc) => {
+                console.log(doc.data());
+                console.log(doc.id);
+                const casualTeacher = doc.data();
+                casualTeacher.id = doc.id;
+                list.push(casualTeacher);
+            });
+            setListOfCasuals((prev) => {
+                return [...list];
+            });
+        };
+
+        loadData();
+
+        const sortedList = list.sort((a, b) => {
             if (a.name > b.name) return 1;
             if (a.name < b.name) return -1;
             return 0;
         });
         setListOfCasuals([...sortedList]);
-    }, []);
+    }, [load]);
 
     const sortByDate = (date) => {
-        const sortedList = casualList.sort((a, b) => {
-            if (a.availability[date] > b.availability[date]) return -1;
-            if (a.availability[date] < b.availability[date]) return 1;
-            return 0;
-        });
+        const sortedList = listOfCasuals
+            .filter((person) => {
+                return person.active;
+            })
+            .sort((a, b) => {
+                if (a.availability[date] > b.availability[date]) return -1;
+                if (a.availability[date] < b.availability[date]) return 1;
+                return 0;
+            });
         setListOfCasuals([...sortedList]);
     };
 
     const sortByKla = () => {
-        const sortedList = casualList.sort((a, b) => {
+        const sortedList = listOfCasuals.sort((a, b) => {
             if (a.kla > b.kla) return 1;
             if (a.kla < b.kla) return -1;
             return 0;
@@ -35,13 +64,65 @@ export default function Home() {
         setListOfCasuals([...sortedList]);
     };
 
-    const sortByName = () => {
-        const sortedList = casualList.sort((a, b) => {
-            if (a.name > b.name) return 1;
-            if (a.name < b.name) return -1;
+    const sortByLName = () => {
+        const sortedList = listOfCasuals.sort((a, b) => {
+            if (a.lname > b.lname) return 1;
+            if (a.lname < b.lname) return -1;
             return 0;
         });
         setListOfCasuals([...sortedList]);
+    };
+    const sortByFName = () => {
+        const sortedList = listOfCasuals.sort((a, b) => {
+            if (a.fname > b.fname) return 1;
+            if (a.fname < b.fname) return -1;
+            return 0;
+        });
+        setListOfCasuals([...sortedList]);
+    };
+
+    const sortByActive = () => {
+        const sortedList = listOfCasuals.sort((a, b) => {
+            if (a.active > b.active) return -1;
+            if (a.active < b.active) return 1;
+            return 0;
+        });
+        setListOfCasuals([...sortedList]);
+    };
+
+    const addUser = async (user) => {
+        console.log('CASUAL', casual);
+        try {
+            const docRef = await addDoc(collection(db, 'casuals'), {
+                fname: user.fname,
+                lname: user.lname || null,
+                kla: user.kla || null,
+                availability: {
+                    monday: user.availability.monday || false,
+                    tuesday: user.availability.tuesday || false,
+                    wednesday: user.availability.wednesday || false,
+                    thursday: user.availability.thursday || false,
+                    friday: user.availability.friday || false,
+                },
+                active: user.active || null,
+                notes: user.notes || null,
+            });
+            console.log('Document written with ID: ', docRef.id);
+        } catch (e) {
+            console.error('Error adding document: ', e);
+        }
+        setLoad((prev) => !prev);
+    };
+
+    console.log(listOfCasuals);
+
+    const deleteCasual = async (e) => {
+        const id = e.target.dataset.id;
+        const delCas = confirm('Are you sure you wish to delete this user?');
+        if (delCas) {
+            await deleteDoc(doc(db, 'casuals', id));
+        }
+        setLoad((prev) => !prev);
     };
 
     return (
@@ -53,14 +134,170 @@ export default function Home() {
             </Head>
 
             <main className={styles.main}>
+                <form
+                    className={styles.form}
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        addUser(casual);
+                    }}
+                >
+                    <label htmlFor=''>
+                        <span>First Name: </span>
+                        <input
+                            type='text'
+                            onChange={(e) => {
+                                setCasual((prev) => {
+                                    return { ...prev, fname: e.target.value };
+                                });
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>Last Name: </span>
+                        <input
+                            type='text'
+                            onChange={(e) => {
+                                setCasual((prev) => {
+                                    return { ...prev, lname: e.target.value };
+                                });
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>KLAs: </span>
+                        <input
+                            type='text'
+                            onChange={(e) => {
+                                setCasual((prev) => {
+                                    return { ...prev, kla: e.target.value };
+                                });
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>Notes: </span>
+                        <input
+                            type='text'
+                            onChange={(e) => {
+                                setCasual((prev) => {
+                                    return { ...prev, notes: e.target.value };
+                                });
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>Active: </span>
+                        <input
+                            type='checkbox'
+                            name=''
+                            id=''
+                            onClick={(e) => {
+                                setCasual((prev) => ({ ...prev, active: e.target.checked }));
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>Mon:</span>
+                        <input
+                            type='checkbox'
+                            name=''
+                            id=''
+                            onClick={(e) => {
+                                setCasual((prev) => ({
+                                    ...prev,
+                                    availability: {
+                                        ...prev.availability,
+                                        monday: e.target.checked,
+                                    },
+                                }));
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>Tues: </span>
+                        <input
+                            type='checkbox'
+                            name=''
+                            id=''
+                            onClick={(e) => {
+                                setCasual((prev) => ({
+                                    ...prev,
+                                    availability: {
+                                        ...prev.availability,
+                                        tuesday: e.target.checked,
+                                    },
+                                }));
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>Wed: </span>
+                        <input
+                            type='checkbox'
+                            name=''
+                            id=''
+                            onClick={(e) => {
+                                setCasual((prev) => ({
+                                    ...prev,
+                                    availability: {
+                                        ...prev.availability,
+                                        wednesday: e.target.checked,
+                                    },
+                                }));
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>Thurs: </span>
+                        <input
+                            type='checkbox'
+                            name=''
+                            id=''
+                            onClick={(e) => {
+                                setCasual((prev) => ({
+                                    ...prev,
+                                    availability: {
+                                        ...prev.availability,
+                                        thursday: e.target.checked,
+                                    },
+                                }));
+                            }}
+                        />
+                    </label>
+                    <label htmlFor=''>
+                        <span>Fri: </span>
+                        <input
+                            type='checkbox'
+                            name=''
+                            id=''
+                            onClick={(e) => {
+                                setCasual((prev) => ({
+                                    ...prev,
+                                    availability: {
+                                        ...prev.availability,
+                                        friday: e.target.checked,
+                                    },
+                                }));
+                            }}
+                        />
+                    </label>
+                    <button type='submit'>Add Casual</button>
+                </form>
                 <h2>List of Casuals</h2>
                 <div className={styles.casuals}>
-                    <div className={styles.sortHeader} onClick={sortByName}>
+                    <div className={styles.sortHeader} onClick={sortByFName}>
                         Name
+                    </div>
+                    <div className={styles.sortHeader} onClick={sortByLName}>
+                        Surname
                     </div>
                     <div className={styles.sortHeader} onClick={sortByKla}>
                         KLA
                     </div>
+                    <div className={styles.sortHeader} onClick={sortByActive}>
+                        Active
+                    </div>
+                    <div>Delete</div>
                     <div className={styles.grid}>
                         <div className={styles.sortHeader} onClick={() => sortByDate('monday')}>
                             Mon
@@ -83,8 +320,15 @@ export default function Home() {
                 {listOfCasuals.map((teacher, i) => {
                     return (
                         <div key={i} className={styles.casuals}>
-                            <div>{teacher.name}</div>
+                            <div>{teacher.fname}</div>
+                            <div>{teacher.lname}</div>
                             <div>{teacher.kla}</div>
+                            <div>{teacher.active ? 'Yes' : 'No'}</div>
+                            <div>
+                                <button onClick={deleteCasual} data-id={teacher.id}>
+                                    X
+                                </button>
+                            </div>
                             <div className={styles.grid}>
                                 <div>
                                     {teacher.availability.monday ? (

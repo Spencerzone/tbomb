@@ -38,6 +38,6 @@
     justify-items: end;
     grid-template-rows: repeat(auto, 1fr);
     max-width: fit-content;
-    background-color: #555;
+    background-color: #999;
     padding: 1em;
 }

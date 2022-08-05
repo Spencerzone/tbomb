@@ -15,7 +15,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(10ch, 12ch));
     align-items: center;
-    border-bottom: dashed 1px #555;
+    border-bottom: dashed 1px rgb(193, 193, 193);
 }
 
 .sortHeader {

@@ -1,3 +1,7 @@
+.main {
+    padding: 1em;
+}
+
 .grid {
     /* background-color: purple; */
     /* padding: 1em; */
@@ -34,4 +38,6 @@
     justify-items: end;
     grid-template-rows: repeat(auto, 1fr);
     max-width: fit-content;
+    background-color: #555;
+    padding: 1em;
 }

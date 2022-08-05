@@ -13,6 +13,7 @@ export default function Home() {
     const [listOfCasuals, setListOfCasuals] = useState([]);
     const [casual, setCasual] = useState({});
     const [load, setLoad] = useState();
+    const [showAdd, setShowAdd] = useState(false);
 
     useEffect(() => {
         let list = [];
@@ -125,6 +126,10 @@ export default function Home() {
         setLoad((prev) => !prev);
     };
 
+    const showAddCasual = () => {
+        setShowAdd((prev) => !prev);
+    };
+
     return (
         <div className={styles.container}>
             <Head>
@@ -134,155 +139,162 @@ export default function Home() {
             </Head>
 
             <main className={styles.main}>
-                <form
-                    className={styles.form}
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        addUser(casual);
-                    }}
-                >
-                    <label htmlFor=''>
-                        <span>First Name: </span>
-                        <input
-                            type='text'
-                            onChange={(e) => {
-                                setCasual((prev) => {
-                                    return { ...prev, fname: e.target.value };
-                                });
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>Last Name: </span>
-                        <input
-                            type='text'
-                            onChange={(e) => {
-                                setCasual((prev) => {
-                                    return { ...prev, lname: e.target.value };
-                                });
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>KLAs: </span>
-                        <input
-                            type='text'
-                            onChange={(e) => {
-                                setCasual((prev) => {
-                                    return { ...prev, kla: e.target.value };
-                                });
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>Notes: </span>
-                        <input
-                            type='text'
-                            onChange={(e) => {
-                                setCasual((prev) => {
-                                    return { ...prev, notes: e.target.value };
-                                });
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>Active: </span>
-                        <input
-                            type='checkbox'
-                            name=''
-                            id=''
-                            onClick={(e) => {
-                                setCasual((prev) => ({ ...prev, active: e.target.checked }));
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>Mon:</span>
-                        <input
-                            type='checkbox'
-                            name=''
-                            id=''
-                            onClick={(e) => {
-                                setCasual((prev) => ({
-                                    ...prev,
-                                    availability: {
-                                        ...prev.availability,
-                                        monday: e.target.checked,
-                                    },
-                                }));
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>Tues: </span>
-                        <input
-                            type='checkbox'
-                            name=''
-                            id=''
-                            onClick={(e) => {
-                                setCasual((prev) => ({
-                                    ...prev,
-                                    availability: {
-                                        ...prev.availability,
-                                        tuesday: e.target.checked,
-                                    },
-                                }));
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>Wed: </span>
-                        <input
-                            type='checkbox'
-                            name=''
-                            id=''
-                            onClick={(e) => {
-                                setCasual((prev) => ({
-                                    ...prev,
-                                    availability: {
-                                        ...prev.availability,
-                                        wednesday: e.target.checked,
-                                    },
-                                }));
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>Thurs: </span>
-                        <input
-                            type='checkbox'
-                            name=''
-                            id=''
-                            onClick={(e) => {
-                                setCasual((prev) => ({
-                                    ...prev,
-                                    availability: {
-                                        ...prev.availability,
-                                        thursday: e.target.checked,
-                                    },
-                                }));
-                            }}
-                        />
-                    </label>
-                    <label htmlFor=''>
-                        <span>Fri: </span>
-                        <input
-                            type='checkbox'
-                            name=''
-                            id=''
-                            onClick={(e) => {
-                                setCasual((prev) => ({
-                                    ...prev,
-                                    availability: {
-                                        ...prev.availability,
-                                        friday: e.target.checked,
-                                    },
-                                }));
-                            }}
-                        />
-                    </label>
-                    <button type='submit'>Add Casual</button>
-                </form>
+                {showAdd ? (
+                    <form
+                        className={styles.form}
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            addUser(casual);
+                        }}
+                    >
+                        <label htmlFor=''>
+                            <span>First Name: </span>
+                            <input
+                                type='text'
+                                onChange={(e) => {
+                                    setCasual((prev) => {
+                                        return { ...prev, fname: e.target.value };
+                                    });
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>Last Name: </span>
+                            <input
+                                type='text'
+                                onChange={(e) => {
+                                    setCasual((prev) => {
+                                        return { ...prev, lname: e.target.value };
+                                    });
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>KLAs: </span>
+                            <input
+                                type='text'
+                                onChange={(e) => {
+                                    setCasual((prev) => {
+                                        return { ...prev, kla: e.target.value };
+                                    });
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>Notes: </span>
+                            <input
+                                type='text'
+                                onChange={(e) => {
+                                    setCasual((prev) => {
+                                        return { ...prev, notes: e.target.value };
+                                    });
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>Active: </span>
+                            <input
+                                type='checkbox'
+                                name=''
+                                id=''
+                                onClick={(e) => {
+                                    setCasual((prev) => ({ ...prev, active: e.target.checked }));
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>Mon:</span>
+                            <input
+                                type='checkbox'
+                                name=''
+                                id=''
+                                onClick={(e) => {
+                                    setCasual((prev) => ({
+                                        ...prev,
+                                        availability: {
+                                            ...prev.availability,
+                                            monday: e.target.checked,
+                                        },
+                                    }));
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>Tues: </span>
+                            <input
+                                type='checkbox'
+                                name=''
+                                id=''
+                                onClick={(e) => {
+                                    setCasual((prev) => ({
+                                        ...prev,
+                                        availability: {
+                                            ...prev.availability,
+                                            tuesday: e.target.checked,
+                                        },
+                                    }));
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>Wed: </span>
+                            <input
+                                type='checkbox'
+                                name=''
+                                id=''
+                                onClick={(e) => {
+                                    setCasual((prev) => ({
+                                        ...prev,
+                                        availability: {
+                                            ...prev.availability,
+                                            wednesday: e.target.checked,
+                                        },
+                                    }));
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>Thurs: </span>
+                            <input
+                                type='checkbox'
+                                name=''
+                                id=''
+                                onClick={(e) => {
+                                    setCasual((prev) => ({
+                                        ...prev,
+                                        availability: {
+                                            ...prev.availability,
+                                            thursday: e.target.checked,
+                                        },
+                                    }));
+                                }}
+                            />
+                        </label>
+                        <label htmlFor=''>
+                            <span>Fri: </span>
+                            <input
+                                type='checkbox'
+                                name=''
+                                id=''
+                                onClick={(e) => {
+                                    setCasual((prev) => ({
+                                        ...prev,
+                                        availability: {
+                                            ...prev.availability,
+                                            friday: e.target.checked,
+                                        },
+                                    }));
+                                }}
+                            />
+                        </label>
+                        <button type='submit'>Add Casual</button>
+                    </form>
+                ) : undefined}
+                {showAdd ? (
+                    <button onClick={showAddCasual}>Hide</button>
+                ) : (
+                    <button onClick={showAddCasual}>Add</button>
+                )}
                 <h2>List of Casuals</h2>
                 <div className={styles.casuals}>
                     <div className={styles.sortHeader} onClick={sortByFName}>

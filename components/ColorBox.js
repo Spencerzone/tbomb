@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function ColorBox({ available }) {
-    let color = 'grey';
+    let color = 'hsla(0,0%,80%,0.3)';
 
     if (available) {
         color = 'green';

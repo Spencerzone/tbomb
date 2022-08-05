@@ -122,8 +122,8 @@ export default function Home() {
         const delCas = confirm('Are you sure you wish to delete this user?');
         if (delCas) {
             await deleteDoc(doc(db, 'casuals', id));
+            setLoad((prev) => !prev);
         }
-        setLoad((prev) => !prev);
     };
 
     const showAddCasual = () => {

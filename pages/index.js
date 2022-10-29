@@ -44,7 +44,7 @@ export default function Home() {
                 return 0;
             });
 
-            // setListOfCasuals([...sortedList]);
+            setListOfCasuals([...sortedList]);
         };
 
         loadData();
@@ -401,19 +401,19 @@ export default function Home() {
                         <div>Notes</div>
                     </div>
                     <div className={styles.subgrid}>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('Monday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('monday')}>
                             Mon
                         </div>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('Tuesday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('tuesday')}>
                             Tues
                         </div>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('Wednesday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('wednesday')}>
                             Wed
                         </div>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('Thursday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('thursday')}>
                             Thurs
                         </div>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('Friday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('friday')}>
                             Fri
                         </div>
                     </div>

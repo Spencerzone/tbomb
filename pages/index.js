@@ -147,11 +147,13 @@ export default function Home() {
         }
     };
 
-    const toggleAvailability = async (e, day) => {
-        // console.log(e);
+    const toggleAvailability = async (e, day, fname) => {
+        console.log(e, fname);
         // console.log(day);
         const id = e;
-        const toggle = confirm('Are you sure you wish to toggle availability for this casual?');
+        const toggle = confirm(
+            `Are you sure you wish to toggle availability for ${fname.toUpperCase()} on ${day.toUpperCase()}?`
+        );
         if (toggle) {
             const docRef = doc(db, 'casuals', id);
             const docData = (await getDoc(docRef)).data();
@@ -399,19 +401,19 @@ export default function Home() {
                         <div>Notes</div>
                     </div>
                     <div className={styles.subgrid}>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('monday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('Monday')}>
                             Mon
                         </div>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('tuesday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('Tuesday')}>
                             Tues
                         </div>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('wednesday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('Wednesday')}>
                             Wed
                         </div>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('thursday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('Thursday')}>
                             Thurs
                         </div>
-                        <div className={styles.sortHeader} onClick={() => sortByDate('friday')}>
+                        <div className={styles.sortHeader} onClick={() => sortByDate('Friday')}>
                             Fri
                         </div>
                     </div>
@@ -445,35 +447,55 @@ export default function Home() {
                                 </div>
                             </div>
                             <div className={styles.subgrid}>
-                                <div onClick={() => toggleAvailability(teacher.id, 'monday')}>
+                                <div
+                                    onClick={() =>
+                                        toggleAvailability(teacher.id, 'monday', teacher.fname)
+                                    }
+                                >
                                     {teacher.availability.monday ? (
                                         <ColorBox available={true} />
                                     ) : (
                                         <ColorBox available={false} />
                                     )}
                                 </div>
-                                <div onClick={() => toggleAvailability(teacher.id, 'tuesday')}>
+                                <div
+                                    onClick={() =>
+                                        toggleAvailability(teacher.id, 'tuesday', teacher.fname)
+                                    }
+                                >
                                     {teacher.availability.tuesday ? (
                                         <ColorBox available />
                                     ) : (
                                         <ColorBox available={false} />
                                     )}
                                 </div>
-                                <div onClick={() => toggleAvailability(teacher.id, 'wednesday')}>
+                                <div
+                                    onClick={() =>
+                                        toggleAvailability(teacher.id, 'wednesday', teacher.fname)
+                                    }
+                                >
                                     {teacher.availability.wednesday ? (
                                         <ColorBox available />
                                     ) : (
                                         <ColorBox available={false} />
                                     )}
                                 </div>
-                                <div onClick={() => toggleAvailability(teacher.id, 'thursday')}>
+                                <div
+                                    onClick={() =>
+                                        toggleAvailability(teacher.id, 'thursday', teacher.fname)
+                                    }
+                                >
                                     {teacher.availability.thursday ? (
                                         <ColorBox available />
                                     ) : (
                                         <ColorBox available={false} />
                                     )}
                                 </div>
-                                <div onClick={() => toggleAvailability(teacher.id, 'friday')}>
+                                <div
+                                    onClick={() =>
+                                        toggleAvailability(teacher.id, 'friday', teacher.fname)
+                                    }
+                                >
                                     {teacher.availability.friday ? (
                                         <ColorBox available />
                                     ) : (

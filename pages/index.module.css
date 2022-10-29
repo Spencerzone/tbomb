@@ -5,9 +5,11 @@
 .grid {
     /* background-color: purple; */
     /* padding: 1em; */
-    display: grid;
     /* grid-template-columns: subgrid; */
-    grid-template-columns: repeat(5, 60px);
+    display: grid;
+    grid-template-columns: repeat(5, 70px);
+    /* border: 1px solid red; */
+    min-width: fit-content;
 }
 
 .grid div {
@@ -18,9 +20,13 @@
 
 .casuals {
     display: grid;
-    grid-template-columns: repeat(7, minmax(10ch, 12ch));
+    grid-template-columns: repeat(8, minmax(10ch, 12ch));
     align-items: center;
     border-bottom: dashed 1px rgb(193, 193, 193);
+}
+
+.active {
+    cursor: pointer;
 }
 
 .sortHeader {

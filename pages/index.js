@@ -29,27 +29,25 @@ export default function Home() {
 
         const loadData = async () => {
             const querySnapshot = await getDocs(collection(db, 'casuals'));
-            console.log(querySnapshot.docs);
+            // console.log(querySnapshot.docs);
             querySnapshot.forEach((doc) => {
-                console.log(doc.data());
-                console.log(doc.id);
+                // console.log(doc.data());
+                // console.log(doc.id);
                 const casualTeacher = doc.data();
                 casualTeacher.id = doc.id;
                 list.push(casualTeacher);
             });
-            setListOfCasuals((prev) => {
-                return [...list];
+
+            const sortedList = list.sort((a, b) => {
+                if (a.lname > b.lname) return 1;
+                if (a.lname < b.lname) return -1;
+                return 0;
             });
+
+            setListOfCasuals([...sortedList]);
         };
 
         loadData();
-
-        const sortedList = list.sort((a, b) => {
-            if (a.name > b.name) return 1;
-            if (a.name < b.name) return -1;
-            return 0;
-        });
-        setListOfCasuals([...sortedList]);
     }, [load]);
 
     const sortByDate = (date) => {
@@ -82,6 +80,7 @@ export default function Home() {
         });
         setListOfCasuals([...sortedList]);
     };
+
     const sortByFName = () => {
         const sortedList = listOfCasuals.sort((a, b) => {
             if (a.fname > b.fname) return 1;
@@ -196,6 +195,17 @@ export default function Home() {
         console.log(e);
         if (newName != null) {
             await updateDoc(docRef, { lname: newName });
+            setLoad((prev) => !prev);
+        }
+    };
+
+    const updateNotes = async (e) => {
+        const id = e.target.dataset.id;
+        const docRef = doc(db, 'casuals', id);
+        const note = (await getDoc(docRef)).data().notes;
+        const newNote = prompt('Please enter the updated note:', note);
+        if (newNote != null) {
+            await updateDoc(docRef, { notes: newNote });
             setLoad((prev) => !prev);
         }
     };
@@ -372,20 +382,23 @@ export default function Home() {
 
                 <h2>List of Casuals</h2>
                 <div className={styles.casuals}>
-                    <div className={styles.sortHeader} onClick={sortByFName}>
-                        Name
+                    <div className={styles.headings}>
+                        <div className={styles.sortHeader} onClick={sortByFName}>
+                            Name
+                        </div>
+                        <div className={styles.sortHeader} onClick={sortByLName}>
+                            Surname
+                        </div>
+                        <div className={styles.sortHeader} onClick={sortByKla}>
+                            KLA
+                        </div>
+                        <div className={styles.sortHeader} onClick={sortByActive}>
+                            Active
+                        </div>
+                        <div>Delete</div>
+                        <div>Notes</div>
                     </div>
-                    <div className={styles.sortHeader} onClick={sortByLName}>
-                        Surname
-                    </div>
-                    <div className={styles.sortHeader} onClick={sortByKla}>
-                        KLA
-                    </div>
-                    <div className={styles.sortHeader} onClick={sortByActive}>
-                        Active
-                    </div>
-                    <div>Delete</div>
-                    <div className={styles.grid}>
+                    <div className={styles.subgrid}>
                         <div className={styles.sortHeader} onClick={() => sortByDate('monday')}>
                             Mon
                         </div>
@@ -406,23 +419,32 @@ export default function Home() {
 
                 {listOfCasuals.map((teacher, i) => {
                     return (
-                        <div key={i} className={styles.casuals} title={teacher.notes}>
-                            <div onClick={() => updateFName(teacher.id)}>{teacher.fname}</div>
-                            <div onClick={() => updateLName(teacher.id)}>{teacher.lname}</div>
-                            <div onClick={() => updateKLA(teacher.id)}>{teacher.kla}</div>
-                            <div
-                                className={styles.active}
-                                onClick={toggleActive}
-                                data-id={teacher.id}
-                            >
-                                {teacher.active ? 'Yes' : 'No'}
+                        <div key={i} className={styles.casuals}>
+                            <div className={styles.headings}>
+                                <div onClick={() => updateFName(teacher.id)}>{teacher.fname}</div>
+                                <div onClick={() => updateLName(teacher.id)}>{teacher.lname}</div>
+                                <div onClick={() => updateKLA(teacher.id)}>{teacher.kla}</div>
+                                <div
+                                    className={styles.active}
+                                    onClick={toggleActive}
+                                    data-id={teacher.id}
+                                >
+                                    {teacher.active ? 'Yes' : 'No'}
+                                </div>
+                                <div>
+                                    <button onClick={deleteCasual} data-id={teacher.id}>
+                                        X
+                                    </button>
+                                </div>
+                                <div
+                                    onClick={updateNotes}
+                                    className={styles.notes}
+                                    data-id={teacher.id}
+                                >
+                                    {teacher.notes ? teacher.notes : '---'}
+                                </div>
                             </div>
-                            <div>
-                                <button onClick={deleteCasual} data-id={teacher.id}>
-                                    X
-                                </button>
-                            </div>
-                            <div className={styles.grid}>
+                            <div className={styles.subgrid}>
                                 <div onClick={() => toggleAvailability(teacher.id, 'monday')}>
                                     {teacher.availability.monday ? (
                                         <ColorBox available={true} />

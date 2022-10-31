@@ -23,6 +23,8 @@ export default function Home() {
     const [casual, setCasual] = useState({});
     const [load, setLoad] = useState();
     const [showAdd, setShowAdd] = useState(false);
+    const [modalActive, setModalActive] = useState(false);
+    const [userInfo, setUserInfo] = useState({});
 
     useEffect(() => {
         let list = [];
@@ -125,9 +127,9 @@ export default function Home() {
 
     console.log(listOfCasuals);
 
-    const deleteCasual = async (e) => {
-        console.log(e.target.dataset);
-        const id = e.target.dataset.id;
+    const deleteCasual = async (e, id) => {
+        e.preventDefault();
+        console.log(id);
         const delCas = confirm('Are you sure you wish to delete this user?');
         if (delCas) {
             await deleteDoc(doc(db, 'casuals', id));
@@ -216,6 +218,50 @@ export default function Home() {
         setShowAdd((prev) => !prev);
     };
 
+    const toggleModal = () => {
+        setModalActive((prev) => !prev);
+    };
+
+    const activateDay = (day) => {
+        console.log(userInfo);
+
+        const isDayActive = userInfo.availability[day];
+        console.log(isDayActive);
+        setUserInfo((prev) => {
+            return { ...prev, availability: { ...prev.availability, [day]: !isDayActive } };
+        });
+    };
+
+    const editUser = async (e) => {
+        const id = e;
+        const docRef = doc(db, 'casuals', id);
+        const userInformation = (await getDoc(docRef)).data();
+        console.log(userInformation);
+        setUserInfo({
+            id,
+            fname: userInformation.fname,
+            lname: userInformation.lname,
+            kla: userInformation.kla,
+            active: userInformation.active,
+            availability: {
+                monday: userInformation.availability.monday,
+                tuesday: userInformation.availability.tuesday,
+                wednesday: userInformation.availability.wednesday,
+                thursday: userInformation.availability.thursday,
+                friday: userInformation.availability.friday,
+            },
+            notes: userInformation.notes,
+        });
+        toggleModal();
+    };
+
+    const submitEditUser = async (e) => {
+        e.preventDefault();
+        const docRef = doc(db, 'casuals', userInfo.id);
+        console.log(docRef);
+        await updateDoc(docRef, { active: userInfo.active });
+    };
+
     return (
         <div className={styles.container}>
             <Head>
@@ -230,6 +276,9 @@ export default function Home() {
                 ) : (
                     <button onClick={showAddCasual}>Add</button>
                 )}
+
+                <button onClick={toggleModal}>{modalActive ? 'Hide' : 'Show'} Modal</button>
+
                 {showAdd ? (
                     <form
                         className={styles.form}
@@ -383,8 +432,127 @@ export default function Home() {
                 ) : undefined}
 
                 <h2>List of Casuals</h2>
+
+                {modalActive ? (
+                    <dialog open className={styles.modal}>
+                        <form>
+                            <label>
+                                <span>FName: </span>
+                                <input type='text' defaultValue={userInfo.fname} />
+                            </label>
+                            <label>
+                                <span>LName: </span>
+                                <input type='text' defaultValue={userInfo.lname} />
+                            </label>
+                            <label>
+                                <span>KLA: </span>
+                                <input type='text' defaultValue={userInfo.kla} />
+                            </label>
+                            <label>
+                                <span>Active:</span>
+                                <input
+                                    type='checkbox'
+                                    name=''
+                                    id=''
+                                    defaultChecked={userInfo.active}
+                                    onChange={(e) => {
+                                        setUserInfo((prev) => {
+                                            return { ...prev, active: e.target.checked };
+                                        });
+                                    }}
+                                />
+                            </label>
+
+                            <label>
+                                <span>Notes</span>
+                                <textarea
+                                    name=''
+                                    id=''
+                                    cols='30'
+                                    rows='10'
+                                    defaultValue={userInfo.notes}
+                                ></textarea>
+                            </label>
+
+                            <span>Availability</span>
+                            <input
+                                type='button'
+                                value='Monday'
+                                onClick={() => {
+                                    activateDay('monday');
+                                }}
+                                className={
+                                    userInfo.availability.monday
+                                        ? styles.activeDay
+                                        : styles.inactiveDay
+                                }
+                            />
+                            <input
+                                type='button'
+                                value='Tuesday'
+                                onClick={() => {
+                                    activateDay('tuesday');
+                                }}
+                                className={
+                                    userInfo.availability.tuesday
+                                        ? styles.activeDay
+                                        : styles.inactiveDay
+                                }
+                            />
+                            <input
+                                type='button'
+                                value='Wednesday'
+                                onClick={() => {
+                                    activateDay('wednesday');
+                                }}
+                                className={
+                                    userInfo.availability.wednesday
+                                        ? styles.activeDay
+                                        : styles.inactiveDay
+                                }
+                            />
+                            <input
+                                type='button'
+                                value='Thursday'
+                                onClick={() => {
+                                    activateDay('thursday');
+                                }}
+                                className={
+                                    userInfo.availability.thursday
+                                        ? styles.activeDay
+                                        : styles.inactiveDay
+                                }
+                            />
+                            <input
+                                type='button'
+                                value='Friday'
+                                onClick={() => {
+                                    activateDay('friday');
+                                }}
+                                className={
+                                    userInfo.availability.friday
+                                        ? styles.activeDay
+                                        : styles.inactiveDay
+                                }
+                            />
+
+                            <button
+                                onClick={(e) => {
+                                    deleteCasual(e, userInfo.id);
+                                }}
+                            >
+                                Delete User
+                            </button>
+                            <button type='submit' onClick={submitEditUser}>
+                                Submit
+                            </button>
+                        </form>
+                    </dialog>
+                ) : null}
+
                 <div className={styles.casuals}>
                     <div className={styles.headings}>
+                        <div className={styles.sortHeader}>Edit</div>
                         <div className={styles.sortHeader} onClick={sortByFName}>
                             Name
                         </div>
@@ -397,7 +565,7 @@ export default function Home() {
                         <div className={styles.sortHeader} onClick={sortByActive}>
                             Active
                         </div>
-                        <div>Delete</div>
+                        {/* <div>Delete</div> */}
                         <div>Notes</div>
                     </div>
                     <div className={styles.subgrid}>
@@ -423,79 +591,53 @@ export default function Home() {
                     return (
                         <div key={i} className={styles.casuals}>
                             <div className={styles.headings}>
-                                <div onClick={() => updateFName(teacher.id)}>{teacher.fname}</div>
-                                <div onClick={() => updateLName(teacher.id)}>{teacher.lname}</div>
-                                <div onClick={() => updateKLA(teacher.id)}>{teacher.kla}</div>
-                                <div
-                                    className={styles.active}
-                                    onClick={toggleActive}
-                                    data-id={teacher.id}
-                                >
+                                {/* <div onClick={() => updateFName(teacher.id)}>{teacher.fname}</div> */}
+                                <div onClick={() => editUser(teacher.id)}>[edit]</div>
+                                <div>{teacher.fname}</div>
+                                <div>{teacher.lname}</div>
+                                <div>{teacher.kla}</div>
+                                <div className={styles.active} data-id={teacher.id}>
                                     {teacher.active ? 'Yes' : 'No'}
                                 </div>
-                                <div>
+                                {/* <div>
                                     <button onClick={deleteCasual} data-id={teacher.id}>
                                         X
                                     </button>
-                                </div>
-                                <div
-                                    onClick={updateNotes}
-                                    className={styles.notes}
-                                    data-id={teacher.id}
-                                >
+                                </div> */}
+                                <div className={styles.notes} data-id={teacher.id}>
                                     {teacher.notes ? teacher.notes : '---'}
                                 </div>
                             </div>
                             <div className={styles.subgrid}>
-                                <div
-                                    onClick={() =>
-                                        toggleAvailability(teacher.id, 'monday', teacher.fname)
-                                    }
-                                >
+                                <div>
                                     {teacher.availability.monday ? (
                                         <ColorBox available={true} />
                                     ) : (
                                         <ColorBox available={false} />
                                     )}
                                 </div>
-                                <div
-                                    onClick={() =>
-                                        toggleAvailability(teacher.id, 'tuesday', teacher.fname)
-                                    }
-                                >
+                                <div>
                                     {teacher.availability.tuesday ? (
                                         <ColorBox available />
                                     ) : (
                                         <ColorBox available={false} />
                                     )}
                                 </div>
-                                <div
-                                    onClick={() =>
-                                        toggleAvailability(teacher.id, 'wednesday', teacher.fname)
-                                    }
-                                >
+                                <div>
                                     {teacher.availability.wednesday ? (
                                         <ColorBox available />
                                     ) : (
                                         <ColorBox available={false} />
                                     )}
                                 </div>
-                                <div
-                                    onClick={() =>
-                                        toggleAvailability(teacher.id, 'thursday', teacher.fname)
-                                    }
-                                >
+                                <div>
                                     {teacher.availability.thursday ? (
                                         <ColorBox available />
                                     ) : (
                                         <ColorBox available={false} />
                                     )}
                                 </div>
-                                <div
-                                    onClick={() =>
-                                        toggleAvailability(teacher.id, 'friday', teacher.fname)
-                                    }
-                                >
+                                <div>
                                     {teacher.availability.friday ? (
                                         <ColorBox available />
                                     ) : (

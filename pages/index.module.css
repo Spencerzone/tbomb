@@ -2,6 +2,27 @@
     padding: 1em;
 }
 
+.container {
+    position: relative;
+}
+
+.modal {
+    position: fixed;
+    left: 50%;
+    right: 50%;
+    width: 50vw;
+    height: 70vh;
+    margin-left: -25vw;
+    margin-right: -35vh;
+    background-color: #525252;
+    overflow: auto;
+}
+
+.modal input[type='button'] {
+    height: 50px;
+    border-radius: 6px;
+}
+
 .subgrid {
     display: grid;
     grid-template-rows: subgrid;
@@ -27,6 +48,15 @@
     align-items: center;
     /* border-bottom: dashed 1px rgb(193, 193, 193); */
     /* max-width: 100px; */
+}
+
+.activeDay {
+    background-color: rgb(145, 255, 126);
+    color: black;
+}
+
+.inactiveDay {
+    text-decoration: line-through;
 }
 
 .casuals {

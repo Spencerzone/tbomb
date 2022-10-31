@@ -19,7 +19,7 @@ dialog::backdrop {
     backdrop-filter: blur(1px);
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
     html {
         color-scheme: dark;
     }
@@ -27,4 +27,4 @@ dialog::backdrop {
         color: white;
         background: black;
     }
-}
+} */

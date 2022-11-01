@@ -8,19 +8,86 @@
 
 .modal {
     position: fixed;
-    left: 50%;
-    right: 50%;
+    left: 10vw;
+    right: 10vw;
     width: 50vw;
-    height: 70vh;
-    margin-left: -25vw;
-    margin-right: -35vh;
-    background-color: #525252;
+    height: 80vh;
+    background-color: hsl(0, 0%, 70%);
     overflow: auto;
+    justify-content: center;
+}
+
+.modal div {
+    display: flex;
+    justify-content: center;
+}
+
+.modal section {
+    display: flex;
+    flex-direction: column;
+    width: minmax(40%, 500px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modal section label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal button {
+    margin-top: 1rem;
+    width: 100px;
+    height: 30px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .modal input[type='button'] {
     height: 50px;
     border-radius: 6px;
+    width: 100px;
+}
+
+.modal input {
+    font-size: 1em;
+}
+
+.modal textarea {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1em;
+}
+
+.modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.modal form label {
+    display: flex;
+    justify-content: center;
+    /* max-width: fit-content; */
+}
+
+.deleteButton {
+    background-color: hsl(0, 100%, 40%);
+    font-style: oblique;
+    color: #fff;
+    border: none;
+}
+
+.submitButton {
+    background-color: hsl(150, 75%, 30%);
+    border: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+.submitButton:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 5px hsl(150, 75%, 20%);
 }
 
 .subgrid {
@@ -56,12 +123,13 @@
 }
 
 .inactiveDay {
+    /* font-style: italic; */
     text-decoration: line-through;
 }
 
 .casuals {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     /* grid-template-columns: repeat(2, 1fr); */
     align-items: center;
     border-bottom: dashed 1px rgb(193, 193, 193);
@@ -71,8 +139,13 @@
     min-width: auto;
 }
 
-.active {
+.edit {
     cursor: pointer;
+    /* text-align: center; */
+}
+
+.edit:hover {
+    background-color: hsl(0, 0%, 75%);
 }
 
 .sortHeader {
@@ -82,7 +155,7 @@
 }
 
 .sortHeader:hover {
-    background-color: #555;
+    background-color: hsl(0, 0%, 75%);
 }
 
 .form {

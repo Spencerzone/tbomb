@@ -52,6 +52,19 @@ export default function Home() {
         loadData();
     }, [load]);
 
+    useEffect(() => {
+        const keyDownHandler = (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                setModalActive(false);
+            }
+        };
+        document.addEventListener('keydown', keyDownHandler);
+        return () => {
+            document.removeEventListener('keydown', keyDownHandler);
+        };
+    }, []);
+
     const sortByDate = (date) => {
         const sortedList = listOfCasuals
             .filter((person) => {
@@ -133,83 +146,7 @@ export default function Home() {
         const delCas = confirm('Are you sure you wish to delete this user?');
         if (delCas) {
             await deleteDoc(doc(db, 'casuals', id));
-            setLoad((prev) => !prev);
-        }
-    };
-
-    const toggleActive = async (e) => {
-        console.log(e);
-        const id = e.target.dataset.id;
-        const toggle = confirm('Are you sure you wish to toggle activity for this casual?');
-        if (toggle) {
-            const docRef = doc(db, 'casuals', id);
-            const active = await (await getDoc(docRef)).data().active;
-            await updateDoc(docRef, { active: !active });
-            setLoad((prev) => !prev);
-        }
-    };
-
-    const toggleAvailability = async (e, day, fname) => {
-        console.log(e, fname);
-        // console.log(day);
-        const id = e;
-        const toggle = confirm(
-            `Are you sure you wish to toggle availability for ${fname.toUpperCase()} on ${day.toUpperCase()}?`
-        );
-        if (toggle) {
-            const docRef = doc(db, 'casuals', id);
-            const docData = (await getDoc(docRef)).data();
-            const available = (await getDoc(docRef)).data().availability[day];
-            await setDoc(docRef, {
-                ...docData,
-                availability: { ...docData.availability, [day]: !available },
-            });
-            setLoad((prev) => !prev);
-        }
-    };
-
-    const updateKLA = async (e) => {
-        const id = e;
-        const docRef = doc(db, 'casuals', id);
-        const kla = (await getDoc(docRef)).data().kla;
-        const newKLA = prompt('Please enter the updated KLA(s):', kla);
-        console.log(newKLA);
-        console.log(e);
-        if (newKLA != null) {
-            await updateDoc(docRef, { kla: newKLA });
-            setLoad((prev) => !prev);
-        }
-    };
-    const updateFName = async (e) => {
-        const id = e;
-        const docRef = doc(db, 'casuals', id);
-        const name = (await getDoc(docRef)).data().fname;
-        const newName = prompt('Please enter the updated name:', name);
-        if (newName != null) {
-            await updateDoc(docRef, { fname: newName });
-            setLoad((prev) => !prev);
-        }
-    };
-    const updateLName = async (e) => {
-        const id = e;
-        const docRef = doc(db, 'casuals', id);
-        const name = (await getDoc(docRef)).data().lname;
-        const newName = prompt('Please enter the updated name:', name);
-        console.log(newName);
-        console.log(e);
-        if (newName != null) {
-            await updateDoc(docRef, { lname: newName });
-            setLoad((prev) => !prev);
-        }
-    };
-
-    const updateNotes = async (e) => {
-        const id = e.target.dataset.id;
-        const docRef = doc(db, 'casuals', id);
-        const note = (await getDoc(docRef)).data().notes;
-        const newNote = prompt('Please enter the updated note:', note);
-        if (newNote != null) {
-            await updateDoc(docRef, { notes: newNote });
+            setModalActive(false);
             setLoad((prev) => !prev);
         }
     };
@@ -259,7 +196,22 @@ export default function Home() {
         e.preventDefault();
         const docRef = doc(db, 'casuals', userInfo.id);
         console.log(docRef);
-        await updateDoc(docRef, { active: userInfo.active });
+        await updateDoc(docRef, {
+            fname: userInfo.fname,
+            lname: userInfo.lname,
+            kla: userInfo.kla,
+            active: userInfo.active,
+            notes: userInfo.notes,
+            availability: {
+                monday: userInfo.availability.monday,
+                tuesday: userInfo.availability.tuesday,
+                wednesday: userInfo.availability.wednesday,
+                thursday: userInfo.availability.thursday,
+                friday: userInfo.availability.friday,
+            },
+        });
+        setModalActive(false);
+        setLoad((prev) => !prev);
     };
 
     return (
@@ -274,10 +226,11 @@ export default function Home() {
                 {showAdd ? (
                     <button onClick={showAddCasual}>Hide</button>
                 ) : (
-                    <button onClick={showAddCasual}>Add</button>
+                    <button onClick={showAddCasual}>Add User</button>
                 )}
 
-                <button onClick={toggleModal}>{modalActive ? 'Hide' : 'Show'} Modal</button>
+                {/* <button onClick={toggleModal}>{modalActive ? 'Hide' : 'Show'} Modal</button>
+                <button onClick={() => console.log(userInfo)}>userInfo</button> */}
 
                 {showAdd ? (
                     <form
@@ -427,7 +380,7 @@ export default function Home() {
                                 }}
                             />
                         </label>
-                        <button type='submit'>Add Casual</button>
+                        <button type='submit'>Add User</button>
                     </form>
                 ) : undefined}
 
@@ -436,114 +389,152 @@ export default function Home() {
                 {modalActive ? (
                     <dialog open className={styles.modal}>
                         <form>
-                            <label>
-                                <span>FName: </span>
-                                <input type='text' defaultValue={userInfo.fname} />
-                            </label>
-                            <label>
-                                <span>LName: </span>
-                                <input type='text' defaultValue={userInfo.lname} />
-                            </label>
-                            <label>
-                                <span>KLA: </span>
-                                <input type='text' defaultValue={userInfo.kla} />
-                            </label>
-                            <label>
-                                <span>Active:</span>
+                            <section>
+                                <label>
+                                    <span>First name: </span>
+                                    <input
+                                        type='text'
+                                        defaultValue={userInfo.fname}
+                                        onChange={(e) => {
+                                            setUserInfo((prev) => {
+                                                return { ...prev, fname: e.target.value };
+                                            });
+                                        }}
+                                    />
+                                </label>
+                                <label>
+                                    <span>Last name: </span>
+                                    <input
+                                        type='text'
+                                        defaultValue={userInfo.lname}
+                                        onChange={(e) => {
+                                            setUserInfo((prev) => {
+                                                return { ...prev, lname: e.target.value };
+                                            });
+                                        }}
+                                    />
+                                </label>
+                                <label>
+                                    <span>KLA: </span>
+                                    <input
+                                        type='text'
+                                        defaultValue={userInfo.kla}
+                                        onChange={(e) => {
+                                            setUserInfo((prev) => {
+                                                return { ...prev, kla: e.target.value };
+                                            });
+                                        }}
+                                    />
+                                </label>
+                                <label>
+                                    <span>Active:</span>
+                                    <input
+                                        type='checkbox'
+                                        name=''
+                                        id=''
+                                        defaultChecked={userInfo.active}
+                                        onChange={(e) => {
+                                            setUserInfo((prev) => {
+                                                return { ...prev, active: e.target.checked };
+                                            });
+                                        }}
+                                    />
+                                </label>
+
+                                <label>
+                                    <span>Notes</span>
+                                    <textarea
+                                        cols='30'
+                                        rows='10'
+                                        defaultValue={userInfo.notes}
+                                        onChange={(e) => {
+                                            setUserInfo((prev) => {
+                                                return { ...prev, notes: e.target.value };
+                                            });
+                                        }}
+                                    ></textarea>
+                                </label>
+                            </section>
+
+                            <div>
+                                <span>Availability:</span>
+                            </div>
+                            <div>
                                 <input
-                                    type='checkbox'
-                                    name=''
-                                    id=''
-                                    defaultChecked={userInfo.active}
-                                    onChange={(e) => {
-                                        setUserInfo((prev) => {
-                                            return { ...prev, active: e.target.checked };
-                                        });
+                                    type='button'
+                                    value='Monday'
+                                    onClick={() => {
+                                        activateDay('monday');
                                     }}
+                                    className={
+                                        userInfo.availability.monday
+                                            ? styles.activeDay
+                                            : styles.inactiveDay
+                                    }
                                 />
-                            </label>
-
-                            <label>
-                                <span>Notes</span>
-                                <textarea
-                                    name=''
-                                    id=''
-                                    cols='30'
-                                    rows='10'
-                                    defaultValue={userInfo.notes}
-                                ></textarea>
-                            </label>
-
-                            <span>Availability</span>
-                            <input
-                                type='button'
-                                value='Monday'
-                                onClick={() => {
-                                    activateDay('monday');
-                                }}
-                                className={
-                                    userInfo.availability.monday
-                                        ? styles.activeDay
-                                        : styles.inactiveDay
-                                }
-                            />
-                            <input
-                                type='button'
-                                value='Tuesday'
-                                onClick={() => {
-                                    activateDay('tuesday');
-                                }}
-                                className={
-                                    userInfo.availability.tuesday
-                                        ? styles.activeDay
-                                        : styles.inactiveDay
-                                }
-                            />
-                            <input
-                                type='button'
-                                value='Wednesday'
-                                onClick={() => {
-                                    activateDay('wednesday');
-                                }}
-                                className={
-                                    userInfo.availability.wednesday
-                                        ? styles.activeDay
-                                        : styles.inactiveDay
-                                }
-                            />
-                            <input
-                                type='button'
-                                value='Thursday'
-                                onClick={() => {
-                                    activateDay('thursday');
-                                }}
-                                className={
-                                    userInfo.availability.thursday
-                                        ? styles.activeDay
-                                        : styles.inactiveDay
-                                }
-                            />
-                            <input
-                                type='button'
-                                value='Friday'
-                                onClick={() => {
-                                    activateDay('friday');
-                                }}
-                                className={
-                                    userInfo.availability.friday
-                                        ? styles.activeDay
-                                        : styles.inactiveDay
-                                }
-                            />
+                                <input
+                                    type='button'
+                                    value='Tuesday'
+                                    onClick={() => {
+                                        activateDay('tuesday');
+                                    }}
+                                    className={
+                                        userInfo.availability.tuesday
+                                            ? styles.activeDay
+                                            : styles.inactiveDay
+                                    }
+                                />
+                                <input
+                                    type='button'
+                                    value='Wednesday'
+                                    onClick={() => {
+                                        activateDay('wednesday');
+                                    }}
+                                    className={
+                                        userInfo.availability.wednesday
+                                            ? styles.activeDay
+                                            : styles.inactiveDay
+                                    }
+                                />
+                                <input
+                                    type='button'
+                                    value='Thursday'
+                                    onClick={() => {
+                                        activateDay('thursday');
+                                    }}
+                                    className={
+                                        userInfo.availability.thursday
+                                            ? styles.activeDay
+                                            : styles.inactiveDay
+                                    }
+                                />
+                                <input
+                                    type='button'
+                                    value='Friday'
+                                    onClick={() => {
+                                        activateDay('friday');
+                                    }}
+                                    className={
+                                        userInfo.availability.friday
+                                            ? styles.activeDay
+                                            : styles.inactiveDay
+                                    }
+                                />
+                            </div>
 
                             <button
+                                className={styles.deleteButton}
                                 onClick={(e) => {
                                     deleteCasual(e, userInfo.id);
                                 }}
                             >
                                 Delete User
                             </button>
-                            <button type='submit' onClick={submitEditUser}>
+                            <button
+                                className={styles.submitButton}
+                                type='submit'
+                                onClick={submitEditUser}
+                            >
                                 Submit
                             </button>
                         </form>
@@ -552,7 +543,7 @@ export default function Home() {
 
                 <div className={styles.casuals}>
                     <div className={styles.headings}>
-                        <div className={styles.sortHeader}>Edit</div>
+                        <div></div>
                         <div className={styles.sortHeader} onClick={sortByFName}>
                             Name
                         </div>
@@ -592,7 +583,9 @@ export default function Home() {
                         <div key={i} className={styles.casuals}>
                             <div className={styles.headings}>
                                 {/* <div onClick={() => updateFName(teacher.id)}>{teacher.fname}</div> */}
-                                <div onClick={() => editUser(teacher.id)}>[edit]</div>
+                                <div className={styles.edit} onClick={() => editUser(teacher.id)}>
+                                    [edit]
+                                </div>
                                 <div>{teacher.fname}</div>
                                 <div>{teacher.lname}</div>
                                 <div>{teacher.kla}</div>

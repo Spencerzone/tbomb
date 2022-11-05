@@ -30,7 +30,7 @@ export default function Home() {
         let list = [];
 
         const loadData = async () => {
-            const querySnapshot = await getDocs(collection(db, 'casuals'));
+            const querySnapshot = await getDocs(collection(db, 'members'));
             // console.log(querySnapshot.docs);
             querySnapshot.forEach((doc) => {
                 // console.log(doc.data());
@@ -115,9 +115,10 @@ export default function Home() {
     };
 
     const addUser = async (user) => {
+        console.log(user);
         console.log('CASUAL', casual);
         try {
-            const docRef = await addDoc(collection(db, 'casuals'), {
+            const docRef = await addDoc(collection(db, 'members'), {
                 fname: user.fname,
                 lname: user.lname || null,
                 kla: user.kla || null,
@@ -145,7 +146,7 @@ export default function Home() {
         console.log(id);
         const delCas = confirm('Are you sure you wish to delete this user?');
         if (delCas) {
-            await deleteDoc(doc(db, 'casuals', id));
+            await deleteDoc(doc(db, 'members', id));
             setModalActive(false);
             setLoad((prev) => !prev);
         }
@@ -171,7 +172,7 @@ export default function Home() {
 
     const editUser = async (e) => {
         const id = e;
-        const docRef = doc(db, 'casuals', id);
+        const docRef = doc(db, 'members', id);
         const userInformation = (await getDoc(docRef)).data();
         console.log(userInformation);
         setUserInfo({
@@ -194,7 +195,7 @@ export default function Home() {
 
     const submitEditUser = async (e) => {
         e.preventDefault();
-        const docRef = doc(db, 'casuals', userInfo.id);
+        const docRef = doc(db, 'members', userInfo.id);
         console.log(docRef);
         await updateDoc(docRef, {
             fname: userInfo.fname,
@@ -262,7 +263,7 @@ export default function Home() {
                                 }}
                             />
                         </label>
-                        <label htmlFor=''>
+                        {/* <label htmlFor=''>
                             <span>KLAs: </span>
                             <input
                                 type='text'
@@ -272,7 +273,7 @@ export default function Home() {
                                     });
                                 }}
                             />
-                        </label>
+                        </label> */}
                         <label htmlFor=''>
                             <span>Notes: </span>
                             <input
@@ -384,7 +385,7 @@ export default function Home() {
                     </form>
                 ) : undefined}
 
-                <h2>List of Casuals</h2>
+                <h2>List of Members</h2>
 
                 {modalActive ? (
                     <dialog open className={styles.modal}>
@@ -414,7 +415,7 @@ export default function Home() {
                                         }}
                                     />
                                 </label>
-                                <label>
+                                {/* <label>
                                     <span>KLA: </span>
                                     <input
                                         type='text'
@@ -425,7 +426,7 @@ export default function Home() {
                                             });
                                         }}
                                     />
-                                </label>
+                                </label> */}
                                 <label>
                                     <span>Active:</span>
                                     <input
@@ -550,9 +551,9 @@ export default function Home() {
                         <div className={styles.sortHeader} onClick={sortByLName}>
                             Surname
                         </div>
-                        <div className={styles.sortHeader} onClick={sortByKla}>
+                        {/* <div className={styles.sortHeader} onClick={sortByKla}>
                             KLA
-                        </div>
+                        </div> */}
                         <div className={styles.sortHeader} onClick={sortByActive}>
                             Active
                         </div>
@@ -588,7 +589,7 @@ export default function Home() {
                                 </div>
                                 <div>{teacher.fname}</div>
                                 <div>{teacher.lname}</div>
-                                <div>{teacher.kla}</div>
+                                {/* <div>{teacher.kla}</div> */}
                                 <div className={styles.active} data-id={teacher.id}>
                                     {teacher.active ? 'Yes' : 'No'}
                                 </div>

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import styles from './index.module.css';
 import { casualList } from '../data/casuals';
 import ColorBox from '../components/ColorBox';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // firestore
 import {
@@ -25,6 +25,7 @@ export default function Home() {
     const [showAdd, setShowAdd] = useState(false);
     const [modalActive, setModalActive] = useState(false);
     const [userInfo, setUserInfo] = useState({});
+    const modalRef = useRef();
 
     useEffect(() => {
         let list = [];
@@ -59,11 +60,21 @@ export default function Home() {
                 setModalActive(false);
             }
         };
+
+        const clickHandler = (e) => {
+            console.log(e);
+            if (modalActive && modalRef.current.contains(e.target)) {
+            } else {
+                setModalActive(false);
+            }
+        };
         document.addEventListener('keydown', keyDownHandler);
+        document.addEventListener('mousedown', clickHandler);
         return () => {
             document.removeEventListener('keydown', keyDownHandler);
+            document.removeEventListener('mousedown', clickHandler);
         };
-    }, []);
+    }, [modalActive]);
 
     const sortByDate = (date) => {
         const sortedList = listOfCasuals
@@ -389,7 +400,7 @@ export default function Home() {
                 <h2>List of Members</h2>
 
                 {modalActive ? (
-                    <dialog open className={styles.modal}>
+                    <dialog open className={styles.modal} ref={modalRef}>
                         <form>
                             <section>
                                 <label>

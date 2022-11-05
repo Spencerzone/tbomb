@@ -6,13 +6,14 @@ import { getFirestore } from 'firebase/firestore';
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
+
 const firebaseConfig = {
-    apiKey: 'AIzaSyBPJIJa1SIIcXM-FF_rEhpkkKNByhOWRr0',
-    authDomain: 'htadmin-66e28.firebaseapp.com',
-    projectId: 'htadmin-66e28',
-    storageBucket: 'htadmin-66e28.appspot.com',
-    messagingSenderId: '131757094408',
-    appId: '1:131757094408:web:45026445c72bc61e4cc3bd',
+    apiKey: 'AIzaSyCXEsW6aSxphTVkucsQPvEAOitGZP1Lqu0',
+    authDomain: 'tbomb-58bb4.firebaseapp.com',
+    projectId: 'tbomb-58bb4',
+    storageBucket: 'tbomb-58bb4.appspot.com',
+    messagingSenderId: '592095898794',
+    appId: '1:592095898794:web:01eeb575be623cd117b4d3',
 };
 
 // Initialize Firebase

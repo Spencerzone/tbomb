@@ -136,6 +136,7 @@ export default function Home() {
         } catch (e) {
             console.error('Error adding document: ', e);
         }
+        showAddCasual();
         setLoad((prev) => !prev);
     };
 

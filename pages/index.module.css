@@ -10,7 +10,8 @@
     position: fixed;
     left: 10vw;
     right: 10vw;
-    width: 50vw;
+    width: 70vw;
+    min-width: fit-content;
     height: 80vh;
     background-color: hsl(0, 0%, 70%);
     overflow: auto;
